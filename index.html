@@ -33,6 +33,8 @@ textarea{resize:vertical;line-height:1.6}
 .analyze-btn{width:100%;padding:14px;border-radius:10px;border:none;background:#1a1a1a;color:#fff;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:1rem;font-family:inherit;transition:background .15s}
 .analyze-btn:hover{background:#333}
 .eg-btn{font-size:12px;color:#4a9eff;background:#f0f7ff;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;margin-top:8px;font-family:inherit;font-weight:500}
+.parse-btn{width:100%;padding:10px;border-radius:8px;border:none;background:#4a9eff;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s;margin-top:8px}
+.parse-btn:hover{background:#2979ff}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .tip{font-size:12px;color:#999;margin-top:6px;line-height:1.5}
 .status{padding:10px 14px;border-radius:8px;font-size:13px;margin-top:10px;display:none;line-height:1.6}
@@ -48,6 +50,8 @@ textarea{resize:vertical;line-height:1.6}
 .copy-btn:hover{background:#2979ff}
 .copy-btn.copied{background:#2e7d32}
 .step-box{background:#fff8e1;border:1px solid #ffe082;border-radius:10px;padding:1.25rem;margin-top:1rem;font-size:14px;color:#5d4037;line-height:1.8}
+.highlight-card{background:#f3f0ff;border:1px solid #d0c4ff;border-radius:12px;padding:1.5rem;margin-bottom:1rem}
+.highlight-card .card-title{color:#5e35b1}
 </style>
 </head>
 <body>
@@ -59,25 +63,50 @@ textarea{resize:vertical;line-height:1.6}
   <div class="card" style="border-color:#c8e6c9;background:#f1f8e9;">
     <div class="card-title" style="color:#2e7d32;">How this works - completely free</div>
     <p style="font-size:14px;color:#388e3c;line-height:1.8;">
-      1. Upload your Bruker zip file OR type your peaks manually<br>
+      1. Paste your MNova peak list OR upload your Bruker zip file<br>
       2. Click Analyze - it builds a prompt and copies it to your clipboard<br>
       3. Paste into Claude chat at <a href="https://claude.ai" target="_blank" style="color:#1565c0;">claude.ai</a> and get full AI analysis instantly!
     </p>
   </div>
 
   <div class="mode-bar">
-    <button class="mode-btn active" id="mb-upload" onclick="setMode('upload')">Upload Bruker file</button>
-    <button class="mode-btn" id="mb-peaks" onclick="setMode('peaks')">Type peaks manually</button>
+    <button class="mode-btn active" id="mb-paste" onclick="setMode('paste')">Paste from MNova</button>
+    <button class="mode-btn" id="mb-upload" onclick="setMode('upload')">Upload Bruker file</button>
     <button class="mode-btn" id="mb-verify" onclick="setMode('verify')">Verify match</button>
   </div>
 
-  <div id="panel-upload">
+  <!-- PASTE FROM MNOVA MODE -->
+  <div id="panel-paste">
+    <div class="highlight-card">
+      <div class="card-title" style="color:#5e35b1;">Paste your MNova output - one paste, done!</div>
+      <p style="font-size:14px;color:#4527a0;line-height:1.8;margin-bottom:12px;">
+        In MNova, go to <strong>Analysis → Peak Picking → Auto Peak Picking</strong><br>
+        Then copy the full NMR line from the bottom of MNova and paste it below.
+      </p>
+      <label>Paste your full MNova peak line here</label>
+      <textarea id="mnova-paste" rows="4" placeholder="e.g. 1H NMR (500 MHz, DMSO) d 12.36, 8.23, 8.02, 7.62, 7.55, 7.44 (m, 4H), 7.30...&#10;&#10;OR just paste the numbers:&#10;12.36, 8.23, 8.02, 7.62, 7.55, 7.44, 7.30"></textarea>
+      <button class="parse-btn" onclick="parseMNova()">Parse peaks automatically</button>
+      <div id="parse-status" class="status"></div>
+    </div>
+    <div class="card" id="parsed-preview" style="display:none">
+      <div class="card-title" style="color:#2e7d32;">Peaks parsed successfully!</div>
+      <div id="parsed-peaks-display" style="margin-bottom:12px;"></div>
+      <div style="margin-top:12px;">
+        <label>Your compound description</label>
+        <input type="text" id="paste-compound" placeholder="e.g. NAH from 5-nitro-2-furfuraldehyde and 2-chlorobenzohydrazide, DMSO-d6, 500 MHz">
+      </div>
+    </div>
+  </div>
+
+  <!-- UPLOAD MODE -->
+  <div id="panel-upload" style="display:none">
     <div class="card">
       <div class="card-title">Prepare your Bruker folder</div>
       <p style="font-size:14px;color:#555;line-height:1.8;">
-        1. Find your NMR data folder - it contains files called <code style="background:#f5f5f0;padding:1px 6px;border-radius:4px;font-size:13px">fid</code> and <code style="background:#f5f5f0;padding:1px 6px;border-radius:4px;font-size:13px">acqus</code><br>
-        2. Right-click the folder, Send to, Compressed (zipped) folder<br>
-        3. Upload that zip file below
+        1. Open your Bruker folder in MNova first and process it (Auto Phase + Auto Baseline)<br>
+        2. Find the numbered folder (e.g. folder called "1") which contains fid and acqus files<br>
+        3. Right-click that folder, Send to, Compressed zipped folder<br>
+        4. Upload the zip file below
       </p>
     </div>
     <div class="card">
@@ -96,46 +125,20 @@ textarea{resize:vertical;line-height:1.6}
       <div id="extracted-peaks"></div>
       <div style="margin-top:16px;">
         <label>Your compound name / description</label>
-        <input type="text" id="u-compound" placeholder="e.g. Furfural-derived NAH from furfural + benzohydrazide">
+        <input type="text" id="u-compound" placeholder="e.g. NAH from 5-nitro-2-furfuraldehyde and 2-chlorobenzohydrazide">
       </div>
     </div>
   </div>
 
-  <div id="panel-peaks" style="display:none">
-    <div class="card">
-      <div class="card-title">Compound description</div>
-      <textarea id="p-comp" rows="2" placeholder="e.g. Furfural-derived N-acyl hydrazone from furfural + benzohydrazide, DMSO-d6, 400 MHz"></textarea>
-      <button class="eg-btn" onclick="loadEg()">Load NAH example</button>
-    </div>
-    <div class="card">
-      <div class="card-title">1H NMR peaks</div>
-      <div class="peak-header">
-        <span>ppm</span><span>Multiplicity</span><span>Integration</span><span>J (Hz)</span><span></span>
-      </div>
-      <div id="pklist"></div>
-      <button class="add-btn" onclick="addRow()">+ Add peak</button>
-      <p class="tip">s=singlet, d=doublet, t=triplet, dd=doublet of doublets, m=multiplet, br s=broad singlet</p>
-    </div>
-    <div class="card">
-      <div class="two-col">
-        <div><label>Solvent</label>
-          <select id="p-solv"><option>DMSO-d6</option><option>CDCl3</option><option>D2O</option><option>MeOD</option><option>Acetone-d6</option></select>
-        </div>
-        <div><label>Frequency (MHz)</label>
-          <select id="p-freq"><option>400</option><option>300</option><option>500</option><option>600</option></select>
-        </div>
-      </div>
-    </div>
-  </div>
-
+  <!-- VERIFY MODE -->
   <div id="panel-verify" style="display:none">
     <div class="card">
       <div class="card-title">Expected structure</div>
-      <textarea id="v-str" rows="2" placeholder="e.g. (E)-N-(furan-2-ylmethylene)benzohydrazide"></textarea>
+      <textarea id="v-str" rows="2" placeholder="e.g. (E)-N-(5-nitrofuran-2-ylmethylene)-2-chlorobenzohydrazide"></textarea>
     </div>
     <div class="card">
-      <div class="card-title">Your actual 1H NMR peaks</div>
-      <textarea id="v-pks" rows="7" style="font-family:monospace;font-size:13px" placeholder="11.42 (br s, 1H)&#10;8.31 (s, 1H)&#10;7.85 (d, J=7.5 Hz, 2H)"></textarea>
+      <div class="card-title">Your actual 1H NMR peaks - paste from MNova</div>
+      <textarea id="v-pks" rows="5" style="font-family:monospace;font-size:13px" placeholder="Paste your MNova line here e.g.&#10;1H NMR (500 MHz, DMSO) d 12.36, 8.23, 8.02, 7.62..."></textarea>
       <div style="margin-top:10px;">
         <label>Solvent</label>
         <select id="v-solv"><option>DMSO-d6</option><option>CDCl3</option><option>D2O</option><option>MeOD</option></select>
@@ -158,24 +161,70 @@ textarea{resize:vertical;line-height:1.6}
 </div>
 
 <script>
-var mode = 'upload';
+var mode = 'paste';
 var rc = 0;
 var extractedPeaks = [];
 var extractedMeta = {};
+var parsedPeaks = [];
 
 function setMode(m) {
   mode = m;
-  var panels = ['upload', 'peaks', 'verify'];
+  var panels = ['paste', 'upload', 'verify'];
   for (var i = 0; i < panels.length; i++) {
     var p = panels[i];
     document.getElementById('panel-' + p).style.display = (p === m) ? 'block' : 'none';
     var btn = document.getElementById('mb-' + p);
-    if (p === m) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
+    if (p === m) { btn.classList.add('active'); } else { btn.classList.remove('active'); }
+  }
+}
+
+function parseMNova() {
+  var raw = document.getElementById('mnova-paste').value.trim();
+  var statusEl = document.getElementById('parse-status');
+  var previewEl = document.getElementById('parsed-preview');
+
+  if (!raw) {
+    statusEl.className = 'status err';
+    statusEl.textContent = 'Please paste your MNova peak list first!';
+    return;
+  }
+
+  // Extract all numbers that look like chemical shifts (0.5 to 15 ppm)
+  var numbers = raw.match(/\d+\.\d+/g);
+  if (!numbers || numbers.length === 0) {
+    statusEl.className = 'status err';
+    statusEl.textContent = 'Could not find any peak values. Make sure you paste the MNova output.';
+    return;
+  }
+
+  // Filter to valid NMR range (0 to 15 ppm)
+  parsedPeaks = [];
+  for (var i = 0; i < numbers.length; i++) {
+    var val = parseFloat(numbers[i]);
+    if (val >= 0 && val <= 15) {
+      parsedPeaks.push(val);
     }
   }
+
+  // Remove duplicates and sort descending
+  var unique = [];
+  var seen = {};
+  for (var i = 0; i < parsedPeaks.length; i++) {
+    var key = parsedPeaks[i].toFixed(2);
+    if (!seen[key]) { seen[key] = true; unique.push(parsedPeaks[i]); }
+  }
+  unique.sort(function(a, b) { return b - a; });
+  parsedPeaks = unique;
+
+  statusEl.className = 'status ok';
+  statusEl.textContent = 'Found ' + parsedPeaks.length + ' peaks! Scroll down and click Analyze.';
+
+  var html = '';
+  for (var i = 0; i < parsedPeaks.length; i++) {
+    html += '<span class="peak-pill">' + parsedPeaks[i].toFixed(2) + ' ppm</span>';
+  }
+  document.getElementById('parsed-peaks-display').innerHTML = html;
+  previewEl.style.display = 'block';
 }
 
 function dragOver(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('drag'); }
@@ -199,16 +248,12 @@ function uploadFile(file) {
   fetch('/upload', { method: 'POST', body: formData })
     .then(function(res) { return res.json(); })
     .then(function(data) {
-      if (data.error) {
-        statusEl.className = 'status err';
-        statusEl.textContent = 'Error: ' + data.error;
-        return;
-      }
+      if (data.error) { statusEl.className = 'status err'; statusEl.textContent = 'Error: ' + data.error; return; }
       extractedPeaks = data.peaks;
       extractedMeta = data.meta;
       statusEl.className = 'status ok';
       statusEl.textContent = 'Found ' + data.peak_count + ' peaks in your spectrum!';
-      document.getElementById('extracted-meta').innerHTML = 'Solvent: <strong>' + (data.meta.solvent || '?') + '</strong> - Frequency: <strong>' + (data.meta.frequency || '?') + ' MHz</strong> - ' + data.peak_count + ' peaks';
+      document.getElementById('extracted-meta').innerHTML = 'Solvent: <strong>' + (data.meta.solvent || '?') + '</strong> - Frequency: <strong>' + (data.meta.frequency || '?') + ' MHz</strong>';
       var pillsHtml = '';
       for (var i = 0; i < data.peaks.length; i++) {
         pillsHtml += '<span class="peak-pill">' + data.peaks[i].ppm + ' <span class="mult">' + data.peaks[i].multiplicity + '</span></span>';
@@ -216,68 +261,33 @@ function uploadFile(file) {
       document.getElementById('extracted-peaks').innerHTML = pillsHtml;
       previewEl.style.display = 'block';
     })
-    .catch(function(e) {
-      statusEl.className = 'status err';
-      statusEl.textContent = 'Upload failed: ' + e.message;
-    });
-}
-
-function addRow(ppm, mult, intg, j) {
-  rc++;
-  var d = document.createElement('div');
-  d.className = 'peak-row';
-  d.id = 'r' + rc;
-  var opts = ['s', 'br s', 'd', 't', 'q', 'dd', 'dt', 'ddd', 'm'];
-  var optHtml = '<option value="">-</option>';
-  for (var i = 0; i < opts.length; i++) {
-    optHtml += '<option' + (mult === opts[i] ? ' selected' : '') + '>' + opts[i] + '</option>';
-  }
-  d.innerHTML = '<input type="text" value="' + (ppm || '') + '" placeholder="e.g. 8.31">'
-    + '<select>' + optHtml + '</select>'
-    + '<input type="text" value="' + (intg || '') + '" placeholder="1H">'
-    + '<input type="text" value="' + (j || '') + '" placeholder="7.5">'
-    + '<button class="rm-btn" onclick="document.getElementById(\'r' + rc + '\').remove()">x</button>';
-  document.getElementById('pklist').appendChild(d);
-}
-
-function loadEg() {
-  document.getElementById('p-comp').value = "Furfural-derived NAH from furfural + benzohydrazide. Expected: (E)-N-(furan-2-ylmethylene)benzohydrazide. DMSO-d6, 400 MHz.";
-  document.getElementById('pklist').innerHTML = '';
-  rc = 0;
-  var eg = [['11.42','br s','1H',''],['8.31','s','1H',''],['7.85','d','2H','7.5'],['7.55','t','1H','7.5'],['7.46','t','2H','7.5'],['7.70','s','1H',''],['6.62','m','1H','']];
-  for (var i = 0; i < eg.length; i++) {
-    addRow(eg[i][0], eg[i][1], eg[i][2], eg[i][3]);
-  }
+    .catch(function(e) { statusEl.className = 'status err'; statusEl.textContent = 'Upload failed: ' + e.message; });
 }
 
 function buildPrompt() {
+  if (mode === 'paste') {
+    if (!parsedPeaks.length) { alert('Please paste and parse your MNova peaks first!'); return null; }
+    var comp = document.getElementById('paste-compound').value || 'N-acyl hydrazone compound';
+    var peakList = '';
+    for (var i = 0; i < parsedPeaks.length; i++) {
+      peakList += parsedPeaks[i].toFixed(2) + ' ppm\n';
+    }
+    return '[NMR INTERPRETER - PASTE FROM MNOVA MODE]\nCompound: ' + comp + '\n\nPeaks from MNova:\n' + peakList + '\nPlease assign each peak to a specific proton and functional group, explain WHY it appears at that chemical shift, identify and explain any solvent peaks (DMSO at 2.50 and 3.33, water at 3.33), discuss E/Z isomerism if NH or CH=N peaks are present, and give a final verdict on whether the expected compound formed. Use plain educational language for a masters student learning NMR.';
+  }
   if (mode === 'upload') {
     if (!extractedPeaks.length) { alert('Please upload your Bruker zip file first!'); return null; }
-    var comp = document.getElementById('u-compound').value || 'Furfural-derived N-acyl hydrazone';
+    var comp = document.getElementById('u-compound').value || 'N-acyl hydrazone compound';
     var peakList = '';
     for (var i = 0; i < extractedPeaks.length; i++) {
       peakList += extractedPeaks[i].ppm + ' ppm (' + extractedPeaks[i].multiplicity + ')\n';
     }
-    return '[NMR INTERPRETER - BRUKER FILE UPLOAD MODE]\nCompound: ' + comp + '\nSolvent: ' + (extractedMeta.solvent || 'DMSO-d6') + ' | Frequency: ' + (extractedMeta.frequency || 400) + ' MHz\n\nAutomatically extracted peaks:\n' + peakList + '\nPlease assign each peak to a specific proton and functional group, explain WHY it appears at that chemical shift, comment on multiplicity, discuss E/Z isomerism if NH or CH=N peaks are present, and give a final verdict. Use plain educational language for a masters student learning NMR.';
-  }
-  if (mode === 'peaks') {
-    var comp = document.getElementById('p-comp').value || 'Not specified';
-    var peaks = '';
-    var rows = document.querySelectorAll('#pklist .peak-row');
-    for (var i = 0; i < rows.length; i++) {
-      var ins = rows[i].querySelectorAll('input, select');
-      if (ins[0].value) {
-        peaks += ins[0].value + ' ppm (' + (ins[1].value || '?') + ', ' + (ins[2].value || '?H') + (ins[3].value ? ', J=' + ins[3].value + ' Hz' : '') + ')\n';
-      }
-    }
-    if (!peaks.trim()) { alert('Please add your peaks first!'); return null; }
-    return '[NMR INTERPRETER - MANUAL PEAKS MODE]\nCompound: ' + comp + '\nSolvent: ' + document.getElementById('p-solv').value + ' | Frequency: ' + document.getElementById('p-freq').value + ' MHz\n\nPeaks:\n' + peaks + '\nPlease assign each peak, explain the chemistry, comment on multiplicities, discuss E/Z isomerism if relevant, and give a verdict. Use plain educational language for a masters student learning NMR.';
+    return '[NMR INTERPRETER - BRUKER FILE UPLOAD MODE]\nCompound: ' + comp + '\nSolvent: ' + (extractedMeta.solvent || 'DMSO-d6') + ' | Frequency: ' + (extractedMeta.frequency || 400) + ' MHz\n\nAutomatically extracted peaks:\n' + peakList + '\nPlease assign each peak, explain the chemistry, identify solvent peaks, discuss E/Z isomerism if relevant, and give a verdict. Use plain educational language.';
   }
   if (mode === 'verify') {
     var str = document.getElementById('v-str').value;
     var pks = document.getElementById('v-pks').value;
     if (!str.trim() || !pks.trim()) { alert('Please fill in both fields!'); return null; }
-    return '[NMR INTERPRETER - VERIFY MATCH MODE]\nExpected structure: ' + str + '\nSolvent: ' + document.getElementById('v-solv').value + '\n\nActual peaks:\n' + pks + '\n\nPlease assign each peak, check multiplicities and integrations, flag unexpected or missing peaks, and give a clear verdict. Use educational language for a masters student.';
+    return '[NMR INTERPRETER - VERIFY MATCH MODE]\nExpected structure: ' + str + '\nSolvent: ' + document.getElementById('v-solv').value + '\n\nActual peaks from MNova:\n' + pks + '\n\nPlease assign each peak to the expected structure, check if the spectrum confirms the compound, identify any solvent peaks, and give a clear verdict. Use educational language.';
   }
 }
 
@@ -295,14 +305,9 @@ function copyPrompt() {
     var btn = document.getElementById('copy-btn');
     btn.textContent = 'Copied!';
     btn.classList.add('copied');
-    setTimeout(function() {
-      btn.textContent = 'Copy to clipboard';
-      btn.classList.remove('copied');
-    }, 2000);
+    setTimeout(function() { btn.textContent = 'Copy to clipboard'; btn.classList.remove('copied'); }, 2000);
   });
 }
-
-addRow(); addRow(); addRow();
 </script>
 </body>
 </html>
