@@ -14,35 +14,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .card{background:#fff;border:1px solid #e5e5e0;border-radius:12px;padding:1.5rem;margin-bottom:1rem}
 .card-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:1rem}
 label{font-size:12px;color:#666;display:block;margin-bottom:5px;font-weight:500}
-input[type=text],textarea,select{width:100%;padding:9px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;color:#1a1a1a;transition:border-color .15s}
-input[type=text]:focus,textarea:focus,select:focus{outline:none;border-color:#4a9eff;box-shadow:0 0 0 3px rgba(74,158,255,.1)}
+input[type=text],input[type=number],textarea,select{width:100%;padding:9px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;color:#1a1a1a;transition:border-color .15s}
+input[type=text]:focus,input[type=number]:focus,textarea:focus,select:focus{outline:none;border-color:#4a9eff;box-shadow:0 0 0 3px rgba(74,158,255,.1)}
 textarea{resize:vertical;line-height:1.6}
 .mode-bar{display:flex;background:#f0f0eb;border-radius:10px;padding:4px;gap:4px;margin-bottom:1.5rem}
 .mode-btn{flex:1;padding:9px 8px;border:none;border-radius:8px;background:transparent;cursor:pointer;font-size:13px;color:#666;font-family:inherit;transition:all .15s}
 .mode-btn.active{background:#fff;color:#1a1a1a;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.1)}
-.drop-zone{border:2px dashed #ddd;border-radius:10px;padding:3rem 1rem;text-align:center;cursor:pointer;transition:all .15s;background:#fafaf8}
-.drop-zone:hover,.drop-zone.drag{border-color:#4a9eff;background:#f0f7ff}
-.drop-zone p{font-size:15px;color:#555;margin-bottom:4px;font-weight:500}
-.drop-zone small{font-size:12px;color:#999}
-.peak-row{display:grid;grid-template-columns:1fr 100px 80px 80px 32px;gap:8px;margin-bottom:8px;align-items:center}
-.peak-header{display:grid;grid-template-columns:1fr 100px 80px 80px 32px;gap:8px;margin-bottom:6px}
-.peak-header span{font-size:11px;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
-.rm-btn{width:32px;height:32px;border-radius:8px;border:1px solid #eee;background:#fff;cursor:pointer;color:#ccc;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.rm-btn:hover{border-color:#ff4444;color:#ff4444}
-.add-btn{font-size:13px;color:#4a9eff;background:none;border:none;cursor:pointer;padding:6px 0;display:flex;align-items:center;gap:5px;margin-top:4px;font-family:inherit;font-weight:500}
+.parse-btn{width:100%;padding:10px;border-radius:8px;border:none;background:#5e35b1;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s;margin-top:8px}
+.parse-btn:hover{background:#4527a0}
 .analyze-btn{width:100%;padding:14px;border-radius:10px;border:none;background:#1a1a1a;color:#fff;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:1rem;font-family:inherit;transition:background .15s}
 .analyze-btn:hover{background:#333}
-.eg-btn{font-size:12px;color:#4a9eff;background:#f0f7ff;border:none;border-radius:6px;padding:5px 12px;cursor:pointer;margin-top:8px;font-family:inherit;font-weight:500}
-.parse-btn{width:100%;padding:10px;border-radius:8px;border:none;background:#4a9eff;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s;margin-top:8px}
-.parse-btn:hover{background:#2979ff}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.tip{font-size:12px;color:#999;margin-top:6px;line-height:1.5}
 .status{padding:10px 14px;border-radius:8px;font-size:13px;margin-top:10px;display:none;line-height:1.6}
 .status.ok{background:#e8f5e9;color:#2e7d32;display:block}
 .status.err{background:#ffebee;color:#c62828;display:block}
 .status.info{background:#e3f2fd;color:#1565c0;display:block}
-.peak-pill{display:inline-flex;align-items:center;gap:5px;background:#f5f5f0;border:1px solid #e5e5e0;border-radius:6px;padding:4px 10px;font-size:13px;margin:3px}
-.peak-pill .mult{font-size:11px;color:#999}
 .copy-box{background:#f5f5f0;border:1px solid #e5e5e0;border-radius:10px;padding:1.25rem;margin-top:1rem}
 .copy-box h3{font-size:13px;font-weight:600;color:#555;margin-bottom:10px}
 .copy-box pre{font-size:13px;font-family:monospace;white-space:pre-wrap;color:#333;background:#fff;border:1px solid #e5e5e0;border-radius:8px;padding:12px;max-height:220px;overflow-y:auto;margin-bottom:12px;line-height:1.6}
@@ -50,8 +35,20 @@ textarea{resize:vertical;line-height:1.6}
 .copy-btn:hover{background:#2979ff}
 .copy-btn.copied{background:#2e7d32}
 .step-box{background:#fff8e1;border:1px solid #ffe082;border-radius:10px;padding:1.25rem;margin-top:1rem;font-size:14px;color:#5d4037;line-height:1.8}
+.peak-table{width:100%;border-collapse:collapse;margin-top:8px}
+.peak-table th{font-size:11px;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:6px 8px;text-align:left;border-bottom:1px solid #eee}
+.peak-table td{padding:6px 8px;border-bottom:1px solid #f5f5f0;vertical-align:middle}
+.peak-table td input{padding:5px 8px;border:1px solid #ddd;border-radius:6px;font-size:13px;font-family:inherit;background:#fff;color:#1a1a1a;width:100%}
+.peak-table td input:focus{outline:none;border-color:#4a9eff}
+.peak-table tr:hover td{background:#fafaf8}
+.intg-total{font-size:13px;font-weight:600;margin-top:10px;padding:8px 12px;border-radius:8px;display:inline-block}
+.intg-ok{background:#e8f5e9;color:#2e7d32}
+.intg-warn{background:#fff8e1;color:#f57f17}
+.rm-btn{width:28px;height:28px;border-radius:6px;border:1px solid #eee;background:#fff;cursor:pointer;color:#ccc;font-size:14px;display:flex;align-items:center;justify-content:center}
+.rm-btn:hover{border-color:#ff4444;color:#ff4444}
+.add-row-btn{font-size:13px;color:#4a9eff;background:none;border:none;cursor:pointer;padding:6px 0;font-family:inherit;font-weight:500;margin-top:4px}
+.tip{font-size:12px;color:#999;margin-top:6px;line-height:1.5}
 .highlight-card{background:#f3f0ff;border:1px solid #d0c4ff;border-radius:12px;padding:1.5rem;margin-bottom:1rem}
-.highlight-card .card-title{color:#5e35b1}
 </style>
 </head>
 <body>
@@ -63,69 +60,57 @@ textarea{resize:vertical;line-height:1.6}
   <div class="card" style="border-color:#c8e6c9;background:#f1f8e9;">
     <div class="card-title" style="color:#2e7d32;">How this works - completely free</div>
     <p style="font-size:14px;color:#388e3c;line-height:1.8;">
-      1. Paste your MNova peak list OR upload your Bruker zip file<br>
-      2. Click Analyze - it builds a prompt and copies it to your clipboard<br>
-      3. Paste into Claude chat at <a href="https://claude.ai" target="_blank" style="color:#1565c0;">claude.ai</a> and get full AI analysis instantly!
+      1. Paste your MNova peak list - peaks and integrations are parsed automatically<br>
+      2. Edit any values if needed, then click Analyze<br>
+      3. Paste into <a href="https://claude.ai" target="_blank" style="color:#1565c0;">claude.ai</a> and get full AI analysis instantly!
     </p>
   </div>
 
   <div class="mode-bar">
     <button class="mode-btn active" id="mb-paste" onclick="setMode('paste')">Paste from MNova</button>
-    <button class="mode-btn" id="mb-upload" onclick="setMode('upload')">Upload Bruker file</button>
     <button class="mode-btn" id="mb-verify" onclick="setMode('verify')">Verify match</button>
   </div>
 
   <!-- PASTE FROM MNOVA MODE -->
   <div id="panel-paste">
     <div class="highlight-card">
-      <div class="card-title" style="color:#5e35b1;">Paste your MNova output - one paste, done!</div>
+      <div class="card-title" style="color:#5e35b1;">Step 1 - Paste your MNova output</div>
       <p style="font-size:14px;color:#4527a0;line-height:1.8;margin-bottom:12px;">
-        In MNova, go to <strong>Analysis → Peak Picking → Auto Peak Picking</strong><br>
-        Then copy the full NMR line from the bottom of MNova and paste it below.
+        In MNova go to <strong>Analysis - Peak Picking - Auto Peak Picking</strong><br>
+        Then copy the full NMR line and paste it below. Integrations are parsed automatically!
       </p>
-      <label>Paste your full MNova peak line here</label>
-      <textarea id="mnova-paste" rows="4" placeholder="e.g. 1H NMR (500 MHz, DMSO) d 12.36, 8.23, 8.02, 7.62, 7.55, 7.44 (m, 4H), 7.30...&#10;&#10;OR just paste the numbers:&#10;12.36, 8.23, 8.02, 7.62, 7.55, 7.44, 7.30"></textarea>
-      <button class="parse-btn" onclick="parseMNova()">Parse peaks automatically</button>
+      <label>Paste your full MNova NMR line here</label>
+      <textarea id="mnova-paste" rows="4" placeholder="e.g. 1H NMR (500 MHz, DMSO) d 12.36 (s, 1H), 8.23 (s, 1H), 8.02 (s, 1H), 7.62 (s, 1H), 7.44-7.81 (m, 4H)&#10;&#10;OR just numbers:&#10;12.36, 8.23, 8.02, 7.62, 7.44"></textarea>
+      <button class="parse-btn" onclick="parseMNova()">Parse peaks and integrations automatically</button>
       <div id="parse-status" class="status"></div>
     </div>
-    <div class="card" id="parsed-preview" style="display:none">
-      <div class="card-title" style="color:#2e7d32;">Peaks parsed successfully!</div>
-      <div id="parsed-peaks-display" style="margin-bottom:12px;"></div>
-      <div style="margin-top:12px;">
+
+    <div class="card" id="peaks-editor" style="display:none">
+      <div class="card-title" style="color:#1a1a1a;">Step 2 - Review and edit peaks</div>
+      <p style="font-size:13px;color:#666;margin-bottom:12px;">Peaks and integrations were parsed automatically. Edit any values if needed, then click Analyze.</p>
+      <table class="peak-table">
+        <thead>
+          <tr>
+            <th>delta (ppm)</th>
+            <th>Multiplicity</th>
+            <th>Integration (H)</th>
+            <th>J (Hz)</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="peak-tbody"></tbody>
+      </table>
+      <button class="add-row-btn" onclick="addPeakRow('','','','')">+ Add peak manually</button>
+      <div id="intg-total-display" style="margin-top:10px;"></div>
+      <p class="tip">Integration total helps verify your compound. For example if you expect 8H total, the non-solvent peaks should sum to 8H.</p>
+
+      <div style="margin-top:16px;">
         <label>Your compound description</label>
         <input type="text" id="paste-compound" placeholder="e.g. NAH from 5-nitro-2-furfuraldehyde and 2-chlorobenzohydrazide, DMSO-d6, 500 MHz">
       </div>
-    </div>
-  </div>
-
-  <!-- UPLOAD MODE -->
-  <div id="panel-upload" style="display:none">
-    <div class="card">
-      <div class="card-title">Prepare your Bruker folder</div>
-      <p style="font-size:14px;color:#555;line-height:1.8;">
-        1. Open your Bruker folder in MNova first and process it (Auto Phase + Auto Baseline)<br>
-        2. Find the numbered folder (e.g. folder called "1") which contains fid and acqus files<br>
-        3. Right-click that folder, Send to, Compressed zipped folder<br>
-        4. Upload the zip file below
-      </p>
-    </div>
-    <div class="card">
-      <div class="card-title">Upload your Bruker zip file</div>
-      <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)">
-        <p style="font-size:2.5rem;margin-bottom:8px;">&#128193;</p>
-        <p>Click to select or drag your zip file here</p>
-        <small>Your Bruker folder zipped - e.g. compound1.zip</small>
-      </div>
-      <input type="file" id="file-input" accept=".zip" style="display:none" onchange="fileSelected(event)">
-      <div id="upload-status" class="status"></div>
-    </div>
-    <div class="card" id="peaks-preview" style="display:none">
-      <div class="card-title">Peaks extracted from your file</div>
-      <div id="extracted-meta" style="font-size:13px;color:#666;margin-bottom:12px;"></div>
-      <div id="extracted-peaks"></div>
-      <div style="margin-top:16px;">
-        <label>Your compound name / description</label>
-        <input type="text" id="u-compound" placeholder="e.g. NAH from 5-nitro-2-furfuraldehyde and 2-chlorobenzohydrazide">
+      <div style="margin-top:10px;">
+        <label>Expected total protons (optional - for verification)</label>
+        <input type="number" id="expected-h" placeholder="e.g. 8" style="width:120px">
       </div>
     </div>
   </div>
@@ -134,11 +119,11 @@ textarea{resize:vertical;line-height:1.6}
   <div id="panel-verify" style="display:none">
     <div class="card">
       <div class="card-title">Expected structure</div>
-      <textarea id="v-str" rows="2" placeholder="e.g. (E)-N-(5-nitrofuran-2-ylmethylene)-2-chlorobenzohydrazide"></textarea>
+      <textarea id="v-str" rows="2" placeholder="e.g. (E)-N-(5-nitrofuran-2-ylmethylene)-2-chlorobenzohydrazide, 8 protons total"></textarea>
     </div>
     <div class="card">
-      <div class="card-title">Your actual 1H NMR peaks - paste from MNova</div>
-      <textarea id="v-pks" rows="5" style="font-family:monospace;font-size:13px" placeholder="Paste your MNova line here e.g.&#10;1H NMR (500 MHz, DMSO) d 12.36, 8.23, 8.02, 7.62..."></textarea>
+      <div class="card-title">Your actual peaks - paste from MNova</div>
+      <textarea id="v-pks" rows="5" style="font-family:monospace;font-size:13px" placeholder="Paste your MNova line here&#10;e.g. 1H NMR (500 MHz, DMSO) d 12.36 (s, 1H), 8.23 (s, 1H)..."></textarea>
       <div style="margin-top:10px;">
         <label>Solvent</label>
         <select id="v-solv"><option>DMSO-d6</option><option>CDCl3</option><option>D2O</option><option>MeOD</option></select>
@@ -155,21 +140,18 @@ textarea{resize:vertical;line-height:1.6}
       <button class="copy-btn" id="copy-btn" onclick="copyPrompt()">Copy to clipboard</button>
     </div>
     <div class="step-box">
-      <strong>Next step:</strong> Click Copy to clipboard above, go to <a href="https://claude.ai" target="_blank" style="color:#1565c0;font-weight:600;">claude.ai</a>, paste and press Enter - Claude gives you the full analysis!
+      <strong>Next step:</strong> Click Copy to clipboard above, go to <a href="https://claude.ai" target="_blank" style="color:#1565c0;font-weight:600;">claude.ai</a>, paste and press Enter - Claude gives you the full analysis including integration check!
     </div>
   </div>
 </div>
 
 <script>
 var mode = 'paste';
-var rc = 0;
-var extractedPeaks = [];
-var extractedMeta = {};
-var parsedPeaks = [];
+var rowCount = 0;
 
 function setMode(m) {
   mode = m;
-  var panels = ['paste', 'upload', 'verify'];
+  var panels = ['paste', 'verify'];
   for (var i = 0; i < panels.length; i++) {
     var p = panels[i];
     document.getElementById('panel-' + p).style.display = (p === m) ? 'block' : 'none';
@@ -178,10 +160,57 @@ function setMode(m) {
   }
 }
 
+function addPeakRow(ppm, mult, intg, j) {
+  rowCount++;
+  var tbody = document.getElementById('peak-tbody');
+  var tr = document.createElement('tr');
+  tr.id = 'pr' + rowCount;
+  var multOpts = ['', 's', 'br s', 'd', 't', 'q', 'dd', 'dt', 'ddd', 'm'];
+  var selHtml = '<select style="padding:5px 8px;border:1px solid #ddd;border-radius:6px;font-size:13px;font-family:inherit;background:#fff;width:100%">';
+  for (var i = 0; i < multOpts.length; i++) {
+    selHtml += '<option value="' + multOpts[i] + '"' + (mult === multOpts[i] ? ' selected' : '') + '>' + (multOpts[i] || '-') + '</option>';
+  }
+  selHtml += '</select>';
+  var id = rowCount;
+  tr.innerHTML = '<td><input type="text" value="' + (ppm || '') + '" placeholder="e.g. 8.23" onchange="updateTotal()"></td>'
+    + '<td>' + selHtml + '</td>'
+    + '<td><input type="number" value="' + (intg || '') + '" placeholder="1" min="0" step="0.5" onchange="updateTotal()" style="width:70px"></td>'
+    + '<td><input type="text" value="' + (j || '') + '" placeholder="7.5" style="width:70px"></td>'
+    + '<td><button class="rm-btn" onclick="document.getElementById(\'pr' + id + '\').remove();updateTotal()">x</button></td>';
+  tbody.appendChild(tr);
+  updateTotal();
+}
+
+function updateTotal() {
+  var rows = document.querySelectorAll('#peak-tbody tr');
+  var total = 0;
+  for (var i = 0; i < rows.length; i++) {
+    var inputs = rows[i].querySelectorAll('input');
+    var intgVal = parseFloat(inputs[1].value);
+    if (!isNaN(intgVal)) total += intgVal;
+  }
+  var expectedH = parseInt(document.getElementById('expected-h').value);
+  var display = document.getElementById('intg-total-display');
+  if (total > 0) {
+    var cls = 'intg-warn';
+    var msg = 'Integration total: ' + total + 'H';
+    if (!isNaN(expectedH)) {
+      if (total === expectedH) {
+        cls = 'intg-ok';
+        msg = 'Integration total: ' + total + 'H - matches expected ' + expectedH + 'H!';
+      } else {
+        msg = 'Integration total: ' + total + 'H - expected ' + expectedH + 'H (difference: ' + Math.abs(total - expectedH) + 'H)';
+      }
+    }
+    display.innerHTML = '<span class="intg-total ' + cls + '">' + msg + '</span>';
+  } else {
+    display.innerHTML = '';
+  }
+}
+
 function parseMNova() {
   var raw = document.getElementById('mnova-paste').value.trim();
   var statusEl = document.getElementById('parse-status');
-  var previewEl = document.getElementById('parsed-preview');
 
   if (!raw) {
     statusEl.className = 'status err';
@@ -189,105 +218,135 @@ function parseMNova() {
     return;
   }
 
-  // Extract all numbers that look like chemical shifts (0.5 to 15 ppm)
-  var numbers = raw.match(/\d+\.\d+/g);
-  if (!numbers || numbers.length === 0) {
+  document.getElementById('peak-tbody').innerHTML = '';
+  rowCount = 0;
+
+  var peaks = [];
+
+  // Try to parse full MNova format: 12.36 (s, 1H) or 12.36 (s, 1H, NH) or 7.44-7.81 (m, 4H)
+  var fullPattern = /(\d+\.?\d*(?:-\d+\.?\d*)?)\s*\(([^)]+)\)/g;
+  var match;
+  var foundFull = false;
+
+  while ((match = fullPattern.exec(raw)) !== null) {
+    var ppmStr = match[1];
+    var details = match[2];
+    // Use midpoint for ranges
+    var ppm;
+    if (ppmStr.indexOf('-') !== -1) {
+      var parts = ppmStr.split('-');
+      ppm = ((parseFloat(parts[0]) + parseFloat(parts[1])) / 2).toFixed(2);
+    } else {
+      ppm = parseFloat(ppmStr).toFixed(2);
+    }
+    if (parseFloat(ppm) < 0 || parseFloat(ppm) > 15) continue;
+
+    // Parse multiplicity
+    var mult = '';
+    var multMatch = details.match(/\b(br\s+s|br\s+d|s|d|t|q|dd|dt|ddd|m)\b/i);
+    if (multMatch) mult = multMatch[1].toLowerCase().replace(/\s+/g, ' ');
+
+    // Parse integration
+    var intg = '';
+    var intgMatch = details.match(/(\d+\.?\d*)\s*H/i);
+    if (intgMatch) intg = intgMatch[1];
+
+    // Parse J value
+    var j = '';
+    var jMatch = details.match(/J\s*=\s*(\d+\.?\d*)/i);
+    if (jMatch) j = jMatch[1];
+
+    peaks.push({ppm: ppm, mult: mult, intg: intg, j: j});
+    foundFull = true;
+  }
+
+  // If no full format found, just extract numbers
+  if (!foundFull || peaks.length === 0) {
+    var numbers = raw.match(/\d+\.\d+/g);
+    if (!numbers || numbers.length === 0) {
+      statusEl.className = 'status err';
+      statusEl.textContent = 'Could not find any peaks. Make sure you paste the MNova output correctly.';
+      return;
+    }
+    var seen = {};
+    for (var i = 0; i < numbers.length; i++) {
+      var val = parseFloat(numbers[i]);
+      if (val >= 0 && val <= 15) {
+        var key = val.toFixed(2);
+        if (!seen[key]) {
+          seen[key] = true;
+          peaks.push({ppm: val.toFixed(2), mult: '', intg: '', j: ''});
+        }
+      }
+    }
+    peaks.sort(function(a, b) { return parseFloat(b.ppm) - parseFloat(a.ppm); });
+  }
+
+  if (peaks.length === 0) {
     statusEl.className = 'status err';
-    statusEl.textContent = 'Could not find any peak values. Make sure you paste the MNova output.';
+    statusEl.textContent = 'No valid peaks found. Please check your pasted text.';
     return;
   }
 
-  // Filter to valid NMR range (0 to 15 ppm)
-  parsedPeaks = [];
-  for (var i = 0; i < numbers.length; i++) {
-    var val = parseFloat(numbers[i]);
-    if (val >= 0 && val <= 15) {
-      parsedPeaks.push(val);
-    }
+  for (var i = 0; i < peaks.length; i++) {
+    addPeakRow(peaks[i].ppm, peaks[i].mult, peaks[i].intg, peaks[i].j);
   }
-
-  // Remove duplicates and sort descending
-  var unique = [];
-  var seen = {};
-  for (var i = 0; i < parsedPeaks.length; i++) {
-    var key = parsedPeaks[i].toFixed(2);
-    if (!seen[key]) { seen[key] = true; unique.push(parsedPeaks[i]); }
-  }
-  unique.sort(function(a, b) { return b - a; });
-  parsedPeaks = unique;
 
   statusEl.className = 'status ok';
-  statusEl.textContent = 'Found ' + parsedPeaks.length + ' peaks! Scroll down and click Analyze.';
-
-  var html = '';
-  for (var i = 0; i < parsedPeaks.length; i++) {
-    html += '<span class="peak-pill">' + parsedPeaks[i].toFixed(2) + ' ppm</span>';
-  }
-  document.getElementById('parsed-peaks-display').innerHTML = html;
-  previewEl.style.display = 'block';
+  statusEl.textContent = 'Parsed ' + peaks.length + ' peaks! Review the table below, edit if needed, then click Analyze.';
+  document.getElementById('peaks-editor').style.display = 'block';
+  document.getElementById('peaks-editor').scrollIntoView({behavior: 'smooth'});
 }
 
-function dragOver(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('drag'); }
-function dragLeave() { document.getElementById('drop-zone').classList.remove('drag'); }
-function dropFile(e) { e.preventDefault(); dragLeave(); var f = e.dataTransfer.files[0]; if (f) uploadFile(f); }
-function fileSelected(e) { var f = e.target.files[0]; if (f) uploadFile(f); }
-
-function uploadFile(file) {
-  var statusEl = document.getElementById('upload-status');
-  var previewEl = document.getElementById('peaks-preview');
-  previewEl.style.display = 'none';
-  if (!file.name.endsWith('.zip')) {
-    statusEl.className = 'status err';
-    statusEl.textContent = 'Please upload a .zip file';
-    return;
+function getPeaksFromTable() {
+  var rows = document.querySelectorAll('#peak-tbody tr');
+  var lines = [];
+  for (var i = 0; i < rows.length; i++) {
+    var inputs = rows[i].querySelectorAll('input');
+    var sel = rows[i].querySelector('select');
+    var ppm = inputs[0].value;
+    var mult = sel ? sel.value : '';
+    var intg = inputs[1].value;
+    var j = inputs[2].value;
+    if (ppm) {
+      var line = ppm + ' ppm';
+      if (mult) line += ' (' + mult;
+      if (intg) line += ', ' + intg + 'H';
+      if (j) line += ', J=' + j + ' Hz';
+      if (mult || intg) line += ')';
+      lines.push(line);
+    }
   }
-  statusEl.className = 'status info';
-  statusEl.textContent = 'Reading your Bruker file...';
-  var formData = new FormData();
-  formData.append('file', file);
-  fetch('/upload', { method: 'POST', body: formData })
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
-      if (data.error) { statusEl.className = 'status err'; statusEl.textContent = 'Error: ' + data.error; return; }
-      extractedPeaks = data.peaks;
-      extractedMeta = data.meta;
-      statusEl.className = 'status ok';
-      statusEl.textContent = 'Found ' + data.peak_count + ' peaks in your spectrum!';
-      document.getElementById('extracted-meta').innerHTML = 'Solvent: <strong>' + (data.meta.solvent || '?') + '</strong> - Frequency: <strong>' + (data.meta.frequency || '?') + ' MHz</strong>';
-      var pillsHtml = '';
-      for (var i = 0; i < data.peaks.length; i++) {
-        pillsHtml += '<span class="peak-pill">' + data.peaks[i].ppm + ' <span class="mult">' + data.peaks[i].multiplicity + '</span></span>';
-      }
-      document.getElementById('extracted-peaks').innerHTML = pillsHtml;
-      previewEl.style.display = 'block';
-    })
-    .catch(function(e) { statusEl.className = 'status err'; statusEl.textContent = 'Upload failed: ' + e.message; });
+  return lines.join('\n');
+}
+
+function getTotalH() {
+  var rows = document.querySelectorAll('#peak-tbody tr');
+  var total = 0;
+  for (var i = 0; i < rows.length; i++) {
+    var inputs = rows[i].querySelectorAll('input');
+    var val = parseFloat(inputs[1].value);
+    if (!isNaN(val)) total += val;
+  }
+  return total;
 }
 
 function buildPrompt() {
   if (mode === 'paste') {
-    if (!parsedPeaks.length) { alert('Please paste and parse your MNova peaks first!'); return null; }
+    var rows = document.querySelectorAll('#peak-tbody tr');
+    if (rows.length === 0) { alert('Please paste and parse your MNova peaks first!'); return null; }
     var comp = document.getElementById('paste-compound').value || 'N-acyl hydrazone compound';
-    var peakList = '';
-    for (var i = 0; i < parsedPeaks.length; i++) {
-      peakList += parsedPeaks[i].toFixed(2) + ' ppm\n';
-    }
-    return '[NMR INTERPRETER - PASTE FROM MNOVA MODE]\nCompound: ' + comp + '\n\nPeaks from MNova:\n' + peakList + '\nPlease assign each peak to a specific proton and functional group, explain WHY it appears at that chemical shift, identify and explain any solvent peaks (DMSO at 2.50 and 3.33, water at 3.33), discuss E/Z isomerism if NH or CH=N peaks are present, and give a final verdict on whether the expected compound formed. Use plain educational language for a masters student learning NMR.';
-  }
-  if (mode === 'upload') {
-    if (!extractedPeaks.length) { alert('Please upload your Bruker zip file first!'); return null; }
-    var comp = document.getElementById('u-compound').value || 'N-acyl hydrazone compound';
-    var peakList = '';
-    for (var i = 0; i < extractedPeaks.length; i++) {
-      peakList += extractedPeaks[i].ppm + ' ppm (' + extractedPeaks[i].multiplicity + ')\n';
-    }
-    return '[NMR INTERPRETER - BRUKER FILE UPLOAD MODE]\nCompound: ' + comp + '\nSolvent: ' + (extractedMeta.solvent || 'DMSO-d6') + ' | Frequency: ' + (extractedMeta.frequency || 400) + ' MHz\n\nAutomatically extracted peaks:\n' + peakList + '\nPlease assign each peak, explain the chemistry, identify solvent peaks, discuss E/Z isomerism if relevant, and give a verdict. Use plain educational language.';
+    var expectedH = document.getElementById('expected-h').value;
+    var peakList = getPeaksFromTable();
+    var totalH = getTotalH();
+    var intgNote = totalH > 0 ? '\nIntegration total from table: ' + totalH + 'H' + (expectedH ? ' (expected: ' + expectedH + 'H)' : '') : '';
+    return '[NMR INTERPRETER - PASTE FROM MNOVA MODE]\nCompound: ' + comp + intgNote + '\n\nPeaks:\n' + peakList + '\n\nPlease:\n1. Assign each peak to a specific proton and functional group\n2. Explain WHY it appears at that chemical shift\n3. Check if integrations make sense for the expected structure\n4. Identify and explain any solvent peaks (DMSO at 2.50, water at 3.33)\n5. Comment on E/Z isomerism if NH or CH=N peaks are present\n6. Give a final verdict on whether the expected compound formed\nUse plain educational language for a masters student learning NMR.';
   }
   if (mode === 'verify') {
     var str = document.getElementById('v-str').value;
     var pks = document.getElementById('v-pks').value;
     if (!str.trim() || !pks.trim()) { alert('Please fill in both fields!'); return null; }
-    return '[NMR INTERPRETER - VERIFY MATCH MODE]\nExpected structure: ' + str + '\nSolvent: ' + document.getElementById('v-solv').value + '\n\nActual peaks from MNova:\n' + pks + '\n\nPlease assign each peak to the expected structure, check if the spectrum confirms the compound, identify any solvent peaks, and give a clear verdict. Use educational language.';
+    return '[NMR INTERPRETER - VERIFY MATCH MODE]\nExpected structure: ' + str + '\nSolvent: ' + document.getElementById('v-solv').value + '\n\nActual peaks from MNova:\n' + pks + '\n\nPlease assign each peak, check integrations, identify solvent peaks, discuss E/Z isomerism, and give a clear verdict. Use educational language.';
   }
 }
 
@@ -296,7 +355,7 @@ function analyze() {
   if (!prompt) return;
   document.getElementById('prompt-text').textContent = prompt;
   document.getElementById('prompt-area').style.display = 'block';
-  document.getElementById('prompt-area').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('prompt-area').scrollIntoView({behavior: 'smooth'});
 }
 
 function copyPrompt() {
